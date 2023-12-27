@@ -21,8 +21,13 @@ ARG RUNNER_IMAGE="debian:${DEBIAN_VERSION}"
 FROM ${BUILDER_IMAGE} as builder
 
 # install build dependencies
-RUN apt-get update -y && apt-get install -y build-essential git \
-    && apt-get clean && rm -f /var/lib/apt/lists/*_*
+RUN apt-get update -qq -y && \
+    apt-get upgrade -qq -y && \
+    apt-get install -y \
+      build-essential \
+      git \
+    && \
+    apt-get clean && rm -f /var/lib/apt/lists/*_*
 
 # prepare build dir
 WORKDIR /app
@@ -46,15 +51,10 @@ COPY config/config.exs config/${MIX_ENV}.exs config/
 RUN mix deps.compile
 
 COPY priv priv
-
 COPY lib lib
-
 COPY assets assets
 
-# compile assets
 RUN mix assets.deploy
-
-# Compile the release
 RUN mix compile
 
 # Changes to config/runtime.exs don't require recompiling the code
@@ -68,8 +68,14 @@ RUN mix release
 FROM ${RUNNER_IMAGE}
 
 RUN apt-get update -y && \
-  apt-get install -y libstdc++6 openssl libncurses5 locales ca-certificates \
-  && apt-get clean && rm -f /var/lib/apt/lists/*_*
+    apt-get install -y \
+      ca-certificates \
+      libncurses5 \
+      libstdc++6 \
+      locales \
+      openssl \
+    && \
+    apt-get clean && rm -f /var/lib/apt/lists/*_*
 
 # Set the locale
 RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
