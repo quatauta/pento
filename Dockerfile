@@ -66,9 +66,5 @@ COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/pento ./
 
 USER nobody
 
-# If using an environment that doesn't automatically reap zombie processes, it is
-# advised to add an init process such as tini via `apt-get install`
-# above and adding an entrypoint. See https://github.com/krallin/tini for details
-# ENTRYPOINT ["/tini", "--"]
-
+ENTRYPOINT ["/sbin/tini", "--"]
 CMD ["/app/bin/server"]
