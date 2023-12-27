@@ -1,0 +1,53 @@
+#!/usr/bin/env elixir
+
+defmodule Setup do
+  def project_root do
+    Path.dirname(__DIR__)
+  end
+
+  def asdf_update do
+    # asdf install #{plugin} latest && asdf local #{plugin} latest
+    File.stream!(".tool-versions")
+    |> Stream.map(&Regex.replace(~r{\s.*}, &1, ""))
+    |> Enum.to_list
+    |> Enum.each(fn tool ->
+      cmd(~w(asdf install #{tool} latest))
+      cmd(~w(asdf local #{tool} latest))
+    end)
+
+  end
+
+  def brew_bundle_install do
+    cmd(~w(brew bundle install))
+  end
+
+  def mix_local_hex do
+    cmd(~w(mix local.hex --force --if-missing))
+  end
+
+  def mix_local_rebar do
+    cmd(~w(mix local.rebar --force --if-missing))
+  end
+
+  def mix_deps_update do
+    cmd(~w(mix deps.update --all))
+  end
+
+  def mix_setup do
+    cmd(~w(mix setup))
+  end
+
+  defp cmd([command | args], opts \\ []) do
+    ["+"] ++ [command | args] |> Enum.join(" ") |> IO.puts
+    System.cmd(command, args, [into: IO.stream()] ++ opts)
+  end
+end
+
+File.cd!(Setup.project_root)
+
+Setup.asdf_update
+Setup.brew_bundle_install
+Setup.mix_local_hex
+Setup.mix_local_rebar
+Setup.mix_deps_update
+Setup.mix_setup
