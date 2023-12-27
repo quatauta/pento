@@ -1,40 +1,22 @@
-# Find eligible builder and runner images on Docker Hub. We use Ubuntu/Debian
-# instead of Alpine to avoid DNS resolution issues in production.
-#
-# https://hub.docker.com/r/hexpm/elixir/tags?page=1&name=debian%25bookworm%25slim
-# https://www.debian.org/releases/
-#
-# This file is based on these images:
-#
-#   - https://hub.docker.com/r/hexpm/elixir/tags - for the build image
-#   - https://hub.docker.com/_/debian?tab=tags&page=1&name=bookworm-20231009-slim - for the release image
-#   - https://pkgs.org/ - resource for finding needed packages
-#   - Ex: hexpm/elixir:1.16.0-erlang-26.2.1-debian-bookworm-20231009-slim
-#
-ARG ELIXIR_VERSION=1.16.0
-ARG ERLANG_VERSION=26.2.1
-ARG DEBIAN_VERSION=bookworm-20231009-slim
+# https://hub.docker.com/r/hexpm/elixir/tags?page=1&name=alpine
+# https://www.alpinelinux.org/releases/
+ARG ELIXIR_VERSION="1.16.0"
+ARG ERLANG_VERSION="26.2.1"
+ARG ALPINE_VERSION="3.18.4"
 
-ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${ERLANG_VERSION}-debian-${DEBIAN_VERSION}"
-ARG RUNNER_IMAGE="debian:${DEBIAN_VERSION}"
+ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${ERLANG_VERSION}-alpine-${ALPINE_VERSION}"
+ARG RUNNER_IMAGE="${BUILDER_IMAGE}"
 
 FROM ${BUILDER_IMAGE} as builder
 
 # install build dependencies
-RUN apt-get update -qq -y && \
-    apt-get upgrade -qq -y && \
-    apt-get install -y \
-      build-essential \
-      git \
-    && \
-    apt-get clean && rm -f /var/lib/apt/lists/*_*
+RUN apk update && apk upgrade && apk add build-base git openssl
 
 # prepare build dir
 WORKDIR /app
 
 # install hex + rebar
-RUN mix local.hex --force && \
-    mix local.rebar --force
+RUN mix local.hex --force && mix local.rebar --force
 
 # set build ENV
 ENV MIX_ENV="prod"
@@ -67,18 +49,7 @@ RUN mix release
 # the compiled release and other runtime necessities
 FROM ${RUNNER_IMAGE}
 
-RUN apt-get update -y && \
-    apt-get install -y \
-      ca-certificates \
-      libncurses5 \
-      libstdc++6 \
-      locales \
-      openssl \
-    && \
-    apt-get clean && rm -f /var/lib/apt/lists/*_*
-
-# Set the locale
-RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
+RUN apk update && apk upgrade && apk add openssl tini
 
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
