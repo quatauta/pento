@@ -41,3 +41,6 @@ npm-debug.log
 # Database files
 *.db
 *.db-*
+
+# ElixirLS language server cache
+/.elixir_ls/
