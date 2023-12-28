@@ -15,7 +15,6 @@
 # https://docs.docker.com/engine/reference/builder/#dockerignore-file
 
 .dockerignore
-Dockerfile
 
 # Ignore git, but keep git HEAD and refs to access current commit hash if needed:
 #
@@ -24,7 +23,6 @@ Dockerfile
 .git
 !.git/HEAD
 !.git/refs
-.gitignore
 
 # Common development/test artifacts
 /cover/
@@ -46,7 +44,9 @@ erl_crash.dump
 /priv/static/assets/
 /priv/static/cache_manifest.json
 
+# OhMyZsh plugin mix-fast cache of mix tasks
 .mix_tasks
-.tool-versions
+
+# SQLite database files
 /*.db
 /*.db-*
