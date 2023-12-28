@@ -6,7 +6,6 @@ defmodule Setup do
   end
 
   def asdf_update do
-    # asdf install #{plugin} latest && asdf local #{plugin} latest
     File.stream!(".tool-versions")
     |> Stream.map(&Regex.replace(~r{\s.*}, &1, ""))
     |> Enum.to_list
