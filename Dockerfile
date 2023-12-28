@@ -10,7 +10,7 @@ ARG RUNNER_IMAGE="${BUILDER_IMAGE}"
 FROM ${BUILDER_IMAGE} as builder
 
 # install build dependencies
-RUN apk update && apk upgrade && apk add build-base git openssl
+RUN apk update && apk upgrade && apk add build-base ca-certificates git openssl
 
 # prepare build dir
 WORKDIR /app
@@ -49,7 +49,7 @@ RUN mix release
 # the compiled release and other runtime necessities
 FROM ${RUNNER_IMAGE}
 
-RUN apk update && apk upgrade && apk add openssl tini
+RUN apk update && apk upgrade && apk add ca-certificates openssl tini
 
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
