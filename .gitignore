@@ -44,6 +44,3 @@ npm-debug.log
 
 # ElixirLS language server cache
 /.elixir_ls/
-
-# mix release files
-/rel/
