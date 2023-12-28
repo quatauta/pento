@@ -11,8 +11,7 @@ defmodule Pento.Application do
       PentoWeb.Telemetry,
       Pento.Repo,
       {Ecto.Migrator,
-        repos: Application.fetch_env!(:pento, :ecto_repos),
-        skip: skip_migrations?()},
+       repos: Application.fetch_env!(:pento, :ecto_repos), skip: skip_migrations?()},
       {DNSCluster, query: Application.get_env(:pento, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Pento.PubSub},
       # Start the Finch HTTP client for sending emails
