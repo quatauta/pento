@@ -63,11 +63,7 @@ COPY assets assets
 RUN --mount=type=cache,sharing=locked,target=/root/.mix \
     --mount=type=cache,sharing=locked,target=/app/_build \
     --mount=type=cache,sharing=locked,target=/app/deps \
-    mix assets.deploy
-RUN --mount=type=cache,sharing=locked,target=/root/.mix \
-    --mount=type=cache,sharing=locked,target=/app/_build \
-    --mount=type=cache,sharing=locked,target=/app/deps \
-    mix compile
+    mix assets.deploy && mix compile
 
 # Changes to config/runtime.exs don't require recompiling the code
 COPY config/runtime.exs config/
