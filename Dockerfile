@@ -18,34 +18,53 @@ RUN --mount=type=cache,sharing=locked,target=/etc/apk/cache apk update && apk up
 WORKDIR /app
 
 # install hex + rebar
-RUN mix local.hex --if-missing && mix local.rebar --if-missing
+RUN --mount=type=cache,sharing=locked,target=/root/.mix \
+    --mount=type=cache,sharing=locked,target=/app/deps \
+    --mount=type=cache,sharing=locked,target=/app/_build \
+    mix local.hex --if-missing --force && mix local.rebar --if-missing --force
 
 # set build ENV
 ENV MIX_ENV="prod"
 
 # install mix dependencies
 COPY mix.exs mix.lock ./
-RUN mix deps.get --only $MIX_ENV
+RUN --mount=type=cache,sharing=locked,target=/root/.mix \
+    --mount=type=cache,sharing=locked,target=/app/deps \
+    --mount=type=cache,sharing=locked,target=/app/_build \
+    mix deps.get --only $MIX_ENV && mix deps.clean --unused
 
 # copy compile-time config files before we compile dependencies
 # to ensure any relevant config change will trigger the dependencies
 # to be re-compiled.
 RUN mkdir -p config
 COPY config/config.exs config/${MIX_ENV}.exs config/
-RUN mix deps.compile && mix tailwind.install --if-missing && mix esbuild.install --if-missing
+RUN --mount=type=cache,sharing=locked,target=/root/.mix \
+    --mount=type=cache,sharing=locked,target=/app/_build \
+    --mount=type=cache,sharing=locked,target=/app/deps \
+    mix deps.compile
 
 COPY priv priv
 COPY lib lib
 COPY assets assets
 
-RUN mix assets.deploy
-RUN mix compile
+RUN --mount=type=cache,sharing=locked,target=/root/.mix \
+    --mount=type=cache,sharing=locked,target=/app/_build \
+    --mount=type=cache,sharing=locked,target=/app/deps \
+    mix assets.deploy
+RUN --mount=type=cache,sharing=locked,target=/root/.mix \
+    --mount=type=cache,sharing=locked,target=/app/_build \
+    --mount=type=cache,sharing=locked,target=/app/deps \
+    mix compile
 
 # Changes to config/runtime.exs don't require recompiling the code
 COPY config/runtime.exs config/
 
 COPY rel rel
-RUN mix release
+RUN --mount=type=cache,sharing=locked,target=/root/.mix \
+    --mount=type=cache,sharing=locked,target=/app/_build \
+    --mount=type=cache,sharing=locked,target=/app/deps \
+    mix release && cp -a /app/_build/${MIX_ENV}/rel/pento /app/rel_pento/
+RUN mkdir -p /app/_build/${MIX_ENV}/rel/ && cp -a /app/rel_pento/ /app/_build/${MIX_ENV}/rel/pento
 
 # start a new build stage so that the final image will only contain
 # the compiled release and other runtime necessities
