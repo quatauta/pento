@@ -55,7 +55,7 @@
   "system": {
     "macos": {
       "sonoma": {
-        "HOMEBREW_VERSION": "4.2.1-28-ge794b99-dirty",
+        "HOMEBREW_VERSION": "4.2.1-30-gf3c687e-dirty",
         "HOMEBREW_PREFIX": "/opt/homebrew",
         "Homebrew/homebrew-core": "api",
         "CLT": "15.1.0.0.1.1700200546",
