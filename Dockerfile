@@ -3,22 +3,10 @@
 ARG ELIXIR_VERSION="1.16.0"
 ARG ERLANG_VERSION="26.2.1"
 ARG ALPINE_VERSION="3.18.4"
+ARG ALPINE_PACKAGES="libgcc libstdc++ ncurses-terminfo-base libncursesw tini"
 
 ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${ERLANG_VERSION}-alpine-${ALPINE_VERSION}"
 ARG RUNNER_IMAGE="alpine:${ALPINE_VERSION}"
-
-ARG CA_CERTIFICATES_VERSION="20230506-r0"
-ARG GCC_VERSION="12.2.1_git20220924-r10"
-ARG NCURSES_VERSION="6.4_p20230506-r0"
-ARG TINI_VERSION="0.19.0-r1"
-ARG ALPINE_PACKAGES="\
-  ca-certificates=${CA_CERTIFICATES_VERSION} \
-  libgcc=${GCC_VERSION} \
-  ncurses-terminfo-base=${NCURSES_VERSION} \
-  libncursesw=${NCURSES_VERSION} \
-  libstdc++=${GCC_VERSION} \
-  tini=${TINI_VERSION} \
-"
 
 FROM ${BUILDER_IMAGE} as builder
 
