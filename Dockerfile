@@ -73,7 +73,9 @@ RUN --mount=type=cache,sharing=locked,target=/root/.mix \
     --mount=type=cache,sharing=locked,target=/app/_build \
     --mount=type=cache,sharing=locked,target=/app/deps \
     mix release && cp -a /app/_build/${MIX_ENV}/rel/pento /app/rel_pento/
-RUN mkdir -p /app/_build/${MIX_ENV}/rel/ && mv /app/rel_pento/ /app/_build/${MIX_ENV}/rel/pento
+RUN mkdir -p /app/_build/${MIX_ENV}/rel/ && \
+    mv /app/rel_pento/ /app/_build/${MIX_ENV}/rel/pento && \
+    find /app/_build/${MIX_ENV}/rel/pento -name "*.plt" -exec rm {} +
 
 # start a new build stage so that the final image will only contain
 # the compiled release and other runtime necessities
