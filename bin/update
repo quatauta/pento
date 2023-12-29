@@ -30,6 +30,7 @@ defmodule Setup do
 
   def mix_deps_update do
     cmd(~w(mix deps.update --all))
+    cmd(~w(mix deps.clean --unused --unlock))
   end
 
   def mix_setup do
