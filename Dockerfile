@@ -26,11 +26,11 @@ ENV MIX_ENV="prod"
 # install mix dependencies
 COPY mix.exs mix.lock ./
 RUN mix deps.get --only $MIX_ENV
-RUN mkdir config
 
 # copy compile-time config files before we compile dependencies
 # to ensure any relevant config change will trigger the dependencies
 # to be re-compiled.
+RUN mkdir -p config
 COPY config/config.exs config/${MIX_ENV}.exs config/
 RUN mix deps.compile && mix tailwind.install --if-missing && mix esbuild.install --if-missing
 
