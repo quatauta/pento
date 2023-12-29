@@ -18,7 +18,7 @@ RUN --mount=type=cache,sharing=locked,target=/etc/apk/cache apk update && apk up
 WORKDIR /app
 
 # install hex + rebar
-RUN mix local.hex --force && mix local.rebar --force
+RUN mix local.hex --if-missing && mix local.rebar --if-missing
 
 # set build ENV
 ENV MIX_ENV="prod"
