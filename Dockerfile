@@ -3,17 +3,19 @@
 ARG ELIXIR_VERSION="1.16.0"
 ARG ERLANG_VERSION="26.2.1"
 ARG ALPINE_VERSION="3.18.4"
-ARG ALPINE_PACKAGES="libgcc libstdc++ ncurses-terminfo-base libncursesw tini"
 
 ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${ERLANG_VERSION}-alpine-${ALPINE_VERSION}"
 ARG RUNNER_IMAGE="alpine:${ALPINE_VERSION}"
 
+ARG BUILDER_PACKAGES="build-base git"
+ARG RUNNER_PACKAGES="libgcc libstdc++ ncurses-terminfo-base libncursesw ca-certificates openssl tini"
+
 FROM ${BUILDER_IMAGE} as builder
 
 # install build dependencies
-ARG ALPINE_PACKAGES
+ARG BUILDER_PACKAGES
 RUN --mount=type=cache,sharing=locked,target=/etc/apk/cache \
-    apk update && apk upgrade && apk add ${ALPINE_PACKAGES}
+    apk update && apk upgrade && apk add ${BUILDER_PACKAGES}
 
 # prepare build dir
 WORKDIR /app
@@ -69,9 +71,9 @@ RUN mkdir -p /app/_build/${MIX_ENV}/rel/ && \
 # the compiled release and other runtime necessities
 FROM ${RUNNER_IMAGE}
 
-ARG ALPINE_PACKAGES
+ARG RUNNER_PACKAGES
 RUN --mount=type=cache,sharing=locked,target=/etc/apk/cache \
-    apk update && apk upgrade && apk add ${ALPINE_PACKAGES}
+    apk update && apk upgrade && apk add ${RUNNER_PACKAGES}
 
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
