@@ -1,4 +1,8 @@
 defmodule Pento.Accounts.User do
+  @moduledoc """
+  User authentication generated with mix phx.gen.auth Accounts User users --live --hashing-lib argon2
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
   @primary_key {:id, :binary_id, autogenerate: true}

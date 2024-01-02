@@ -1,4 +1,8 @@
 defmodule PentoWeb.UserAuth do
+  @moduledoc """
+  User authentication generated with mix phx.gen.auth Accounts User users --live --hashing-lib argon2
+  """
+
   use PentoWeb, :verified_routes
 
   import Plug.Conn

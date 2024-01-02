@@ -1,4 +1,8 @@
 defmodule Pento.Accounts.UserNotifier do
+  @moduledoc """
+  User authentication generated with mix phx.gen.auth Accounts User users --live --hashing-lib argon2
+  """
+
   import Swoosh.Email
 
   alias Pento.Mailer
