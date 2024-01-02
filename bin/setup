@@ -10,7 +10,9 @@ defmodule Setup do
   end
 
   def brew_bundle_install do
-    cmd(~w(brew bundle install))
+    if File.exists?("Brewfile") do
+      cmd(~w(brew bundle install))
+    end
   end
 
   def mix_local_hex do
