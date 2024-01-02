@@ -7,7 +7,8 @@ defmodule PentoWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_pento_key",
-    signing_salt: "RaETfRKc",
+    signing_salt: "gfjvF+E42UOWPgU1q9NH/",
+    encryption_salt: "BOc4HAAyAr7evxF4kdtwT",
     same_site: "Lax"
   ]
 
@@ -20,7 +21,7 @@ defmodule PentoWeb.Endpoint do
   plug Plug.Static,
     at: "/",
     from: :pento,
-    gzip: false,
+    gzip: true,
     only: PentoWeb.static_paths()
 
   # Code reloading can be explicitly enabled under the
