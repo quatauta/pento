@@ -4,9 +4,11 @@ defmodule Pento.Accounts do
   """
 
   import Ecto.Query, warn: false
-  alias Pento.Repo
 
-  alias Pento.Accounts.{User, UserToken, UserNotifier}
+  alias Pento.Accounts.User
+  alias Pento.Accounts.UserNotifier
+  alias Pento.Accounts.UserToken
+  alias Pento.Repo
 
   ## Database getters
 
@@ -38,8 +40,7 @@ defmodule Pento.Accounts do
       nil
 
   """
-  def get_user_by_email_and_password(email, password)
-      when is_binary(email) and is_binary(password) do
+  def get_user_by_email_and_password(email, password) when is_binary(email) and is_binary(password) do
     user = Repo.get_by(User, email: email)
     if User.valid_password?(user, password), do: user
   end

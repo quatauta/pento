@@ -1,9 +1,10 @@
 defmodule PentoWeb.UserSettingsLiveTest do
   use PentoWeb.ConnCase
 
-  alias Pento.Accounts
-  import Phoenix.LiveViewTest
   import Pento.AccountsFixtures
+  import Phoenix.LiveViewTest
+
+  alias Pento.Accounts
 
   describe "Settings page" do
     test "renders settings page", %{conn: conn} do

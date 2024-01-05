@@ -18,12 +18,12 @@ defmodule Pento.DataCase do
 
   using do
     quote do
-      alias Pento.Repo
-
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
       import Pento.DataCase
+
+      alias Pento.Repo
     end
   end
 

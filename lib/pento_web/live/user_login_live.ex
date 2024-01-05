@@ -1,4 +1,5 @@
 defmodule PentoWeb.UserLoginLive do
+  @moduledoc false
   use PentoWeb, :live_view
 
   def render(assigns) do

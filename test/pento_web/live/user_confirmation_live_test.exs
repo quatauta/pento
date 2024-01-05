@@ -1,8 +1,8 @@
 defmodule PentoWeb.UserConfirmationLiveTest do
   use PentoWeb.ConnCase
 
-  import Phoenix.LiveViewTest
   import Pento.AccountsFixtures
+  import Phoenix.LiveViewTest
 
   alias Pento.Accounts
   alias Pento.Repo
@@ -56,8 +56,7 @@ defmodule PentoWeb.UserConfirmationLiveTest do
 
       # when logged in
       conn =
-        build_conn()
-        |> log_in_user(user)
+        log_in_user(build_conn(), user)
 
       {:ok, lv, _html} = live(conn, ~p"/users/confirm/#{token}")
 

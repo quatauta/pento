@@ -1,10 +1,11 @@
 defmodule Pento.AccountsTest do
   use Pento.DataCase
 
-  alias Pento.Accounts
-
   import Pento.AccountsFixtures
-  alias Pento.Accounts.{User, UserToken}
+
+  alias Pento.Accounts
+  alias Pento.Accounts.User
+  alias Pento.Accounts.UserToken
 
   describe "get_user_by_email/1" do
     test "does not return the user if the email does not exist" do

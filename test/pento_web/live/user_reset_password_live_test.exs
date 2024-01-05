@@ -1,8 +1,8 @@
 defmodule PentoWeb.UserResetPasswordLiveTest do
   use PentoWeb.ConnCase
 
-  import Phoenix.LiveViewTest
   import Pento.AccountsFixtures
+  import Phoenix.LiveViewTest
 
   alias Pento.Accounts
 
@@ -39,9 +39,7 @@ defmodule PentoWeb.UserResetPasswordLiveTest do
       result =
         lv
         |> element("#reset_password_form")
-        |> render_change(
-          user: %{"password" => "secret12", "password_confirmation" => "secret123456"}
-        )
+        |> render_change(user: %{"password" => "secret12", "password_confirmation" => "secret123456"})
 
       assert result =~ "should be at least 12 character"
       assert result =~ "does not match password"

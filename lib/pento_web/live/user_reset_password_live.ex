@@ -1,4 +1,5 @@
 defmodule PentoWeb.UserResetPasswordLive do
+  @moduledoc false
   use PentoWeb, :live_view
 
   alias Pento.Accounts

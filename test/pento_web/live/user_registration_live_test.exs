@@ -1,8 +1,8 @@
 defmodule PentoWeb.UserRegistrationLiveTest do
   use PentoWeb.ConnCase
 
-  import Phoenix.LiveViewTest
   import Pento.AccountsFixtures
+  import Phoenix.LiveViewTest
 
   describe "Registration page" do
     test "renders registration page", %{conn: conn} do

@@ -4,7 +4,9 @@ defmodule Pento.Accounts.UserToken do
   """
 
   use Ecto.Schema
+
   import Ecto.Query
+
   alias Pento.Accounts.UserToken
 
   @hash_algorithm :sha256

@@ -10,8 +10,7 @@ defmodule Pento.Application do
     children = [
       PentoWeb.Telemetry,
       Pento.Repo,
-      {Ecto.Migrator,
-       repos: Application.fetch_env!(:pento, :ecto_repos), skip: skip_migrations?()},
+      {Ecto.Migrator, repos: Application.fetch_env!(:pento, :ecto_repos), skip: skip_migrations?()},
       {DNSCluster, query: Application.get_env(:pento, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Pento.PubSub},
       # Start the Finch HTTP client for sending emails
@@ -36,7 +35,7 @@ defmodule Pento.Application do
     :ok
   end
 
-  defp skip_migrations?() do
+  defp skip_migrations? do
     # By default, sqlite migrations are run when using a release
     System.get_env("RELEASE_NAME") != nil
   end

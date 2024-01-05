@@ -1,8 +1,8 @@
 defmodule PentoWeb.UserForgotPasswordLiveTest do
   use PentoWeb.ConnCase
 
-  import Phoenix.LiveViewTest
   import Pento.AccountsFixtures
+  import Phoenix.LiveViewTest
 
   alias Pento.Accounts
   alias Pento.Repo

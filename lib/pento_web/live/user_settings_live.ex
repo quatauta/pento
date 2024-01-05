@@ -1,4 +1,5 @@
 defmodule PentoWeb.UserSettingsLive do
+  @moduledoc false
   use PentoWeb, :live_view
 
   alias Pento.Accounts

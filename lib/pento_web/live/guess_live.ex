@@ -1,9 +1,9 @@
 defmodule PentoWeb.GuessLive do
+  @moduledoc false
   use PentoWeb, :live_view
 
   def mount(_params, _session, socket) do
-    {:ok,
-     assign(socket, number: to_string(:rand.uniform(10)), score: 0, message: "Make a guess:")}
+    {:ok, assign(socket, number: to_string(:rand.uniform(10)), score: 0, message: "Make a guess:")}
   end
 
   @spec render(any) :: Phoenix.LiveView.Rendered.t()

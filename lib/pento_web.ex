@@ -24,9 +24,9 @@ defmodule PentoWeb do
       use Phoenix.Router, helpers: false
 
       # Import common connection and controller functions to use in pipelines
-      import Plug.Conn
       import Phoenix.Controller
       import Phoenix.LiveView.Router
+      import Plug.Conn
     end
   end
 
@@ -42,8 +42,8 @@ defmodule PentoWeb do
         formats: [:html, :json],
         layouts: [html: PentoWeb.Layouts]
 
-      import Plug.Conn
       import PentoWeb.Gettext
+      import Plug.Conn
 
       unquote(verified_routes())
     end
@@ -82,10 +82,10 @@ defmodule PentoWeb do
   defp html_helpers do
     quote do
       # HTML escaping functionality
-      import Phoenix.HTML
       # Core UI components and translation
       import PentoWeb.CoreComponents
       import PentoWeb.Gettext
+      import Phoenix.HTML
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
