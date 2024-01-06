@@ -1,6 +1,7 @@
 #!/usr/bin/env elixir
 
 defmodule Setup do
+  @moduledoc false
   def project_root do
     Path.dirname(__DIR__)
   end
@@ -36,17 +37,17 @@ defmodule Setup do
   end
 
   defp cmd([command | args], opts \\ []) do
-    ["+"] ++ [command | args] |> Enum.join(" ") |> IO.puts
+    (["+"] ++ [command | args]) |> Enum.join(" ") |> IO.puts()
     System.cmd(command, args, [into: IO.stream()] ++ opts)
   end
 end
 
-File.cd!(Setup.project_root)
+File.cd!(Setup.project_root())
 
-Setup.asdf_install
-Setup.brew_bundle_install
-Setup.mix_local_hex
-Setup.mix_local_rebar
-Setup.mix_archive_phx_new
-Setup.mix_deps_get
-Setup.mix_setup
+Setup.asdf_install()
+Setup.brew_bundle_install()
+Setup.mix_local_hex()
+Setup.mix_local_rebar()
+Setup.mix_archive_phx_new()
+Setup.mix_deps_get()
+Setup.mix_setup()
