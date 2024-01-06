@@ -3,7 +3,7 @@ defmodule PentoWeb.GuessLive do
   use PentoWeb, :live_view
 
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, number: to_string(:rand.uniform(10)), score: 0, message: "Make a guess:")}
+    {:ok, assign(socket, number: next_number(), score: 0, message: "Make a guess:")}
   end
 
   @spec render(any) :: Phoenix.LiveView.Rendered.t()
@@ -26,30 +26,25 @@ defmodule PentoWeb.GuessLive do
     """
   end
 
+  def handle_event("guess", %{"number" => guessed_number}, %{assigns: %{number: guessed_number}} = socket) do
+    {:noreply,
+     assign(socket,
+       message: "Your guess: #{guessed_number}. Correct 🎉 Guess again!",
+       score: socket.assigns.score + 10,
+       number: next_number()
+     )}
+  end
+
   def handle_event("guess", %{"number" => guess}, socket) do
-    correct = socket.assigns.number == guess
+    {:noreply,
+     assign(socket,
+       message: "Your guess: #{guess}. Wrong. Guess again.",
+       score: socket.assigns.score - 1,
+       number: socket.assigns.number
+     )}
+  end
 
-    message =
-      if correct do
-        "Your guess: #{guess}. Correct 🎉"
-      else
-        "Your guess: #{guess}. Wrong. Guess again."
-      end
-
-    score =
-      if correct do
-        socket.assigns.score + 10
-      else
-        socket.assigns.score - 1
-      end
-
-    number =
-      if correct do
-        to_string(:rand.uniform(10))
-      else
-        socket.assigns.number
-      end
-
-    {:noreply, assign(socket, message: message, score: score, number: number)}
+  defp next_number do
+    to_string(:rand.uniform(10))
   end
 end
