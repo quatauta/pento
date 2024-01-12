@@ -12,62 +12,50 @@ ARG RUNNER_PACKAGES="libgcc libstdc++ ncurses-terminfo-base libncursesw ca-certi
 
 FROM ${BUILDER_IMAGE} as builder
 
-# install build dependencies
+# Install build dependencies
 ARG BUILDER_PACKAGES
 RUN --mount=type=cache,sharing=locked,target=/etc/apk/cache \
     apk update && apk upgrade && apk add ${BUILDER_PACKAGES}
 
-# prepare build dir
+# Prepare build dir
 WORKDIR /app
 
-# install hex + rebar
-RUN --mount=type=cache,sharing=locked,target=/root/.mix \
-    --mount=type=cache,sharing=locked,target=/app/deps \
-    --mount=type=cache,sharing=locked,target=/app/_build \
-    mix local.hex --if-missing --force && mix local.rebar --if-missing --force
+# Install hex + rebar
+RUN mix local.hex --if-missing --force && mix local.rebar --if-missing --force
 
-# set build ENV
+# Set build ENV
 ENV MIX_ENV="prod"
 
-# install mix dependencies
+# Install mix dependencies
 COPY mix.exs mix.lock ./
-RUN --mount=type=cache,sharing=locked,target=/root/.mix \
-    --mount=type=cache,sharing=locked,target=/app/deps \
-    --mount=type=cache,sharing=locked,target=/app/_build \
-    mix deps.get --only $MIX_ENV && mix deps.clean --unused
+RUN mix deps.get --only $MIX_ENV && mix deps.clean --unused
 
-# copy compile-time config files before we compile dependencies
+# Copy compile-time config files before we compile dependencies
 # to ensure any relevant config change will trigger the dependencies
 # to be re-compiled.
+# Download and install esbuild & tailwindcss to _build/
+# (versions are defined in config.exs).
 RUN mkdir -p config
 COPY config/config.exs config/${MIX_ENV}.exs config/
-RUN --mount=type=cache,sharing=locked,target=/root/.mix \
-    --mount=type=cache,sharing=locked,target=/app/_build \
-    --mount=type=cache,sharing=locked,target=/app/deps \
-    mix deps.compile
+RUN mix do deps.compile, esbuild.install, tailwind.install
 
+# Deploy assets
 COPY priv priv
-COPY lib lib
 COPY assets assets
+RUN mix assets.deploy
 
-RUN --mount=type=cache,sharing=locked,target=/root/.mix \
-    --mount=type=cache,sharing=locked,target=/app/_build \
-    --mount=type=cache,sharing=locked,target=/app/deps \
-    mix assets.deploy && mix compile
+# 
+COPY lib lib
+RUN mix compile
 
 # Changes to config/runtime.exs don't require recompiling the code
 COPY config/runtime.exs config/
 
+# Create mix release and remove *.plt (Dy
 COPY rel rel
-RUN --mount=type=cache,sharing=locked,target=/root/.mix \
-    --mount=type=cache,sharing=locked,target=/app/_build \
-    --mount=type=cache,sharing=locked,target=/app/deps \
-    mix release && cp -a /app/_build/${MIX_ENV}/rel/pento /app/rel_pento/
-RUN mkdir -p /app/_build/${MIX_ENV}/rel/ && \
-    mv /app/rel_pento/ /app/_build/${MIX_ENV}/rel/pento && \
-    find /app/_build/${MIX_ENV}/rel/pento -name "*.plt" -exec rm {} +
+RUN mix release && find /app/_build/${MIX_ENV}/rel/pento -name "*.plt" -exec rm {} +
 
-# start a new build stage so that the final image will only contain
+# Start a new build stage so that the final image will only contain
 # the compiled release and other runtime necessities
 FROM ${RUNNER_IMAGE}
 
@@ -82,7 +70,7 @@ ENV LC_ALL en_US.UTF-8
 WORKDIR "/app"
 RUN chown nobody /app
 
-# set runner ENV
+# Set runner ENV
 ENV MIX_ENV="prod"
 
 # Only copy the final release from the build stage
