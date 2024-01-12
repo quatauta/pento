@@ -52,6 +52,13 @@ config :tailwind,
     cd: Path.expand("../assets", __DIR__)
   ]
 
+# Configure Honeybadger https://docs.honeybadger.io/lib/elixir
+config :honeybadger,
+  breadcrumbs_enabled: true,
+  ecto_repos: [Pento.Repo],
+  environment_name: Mix.env(),
+  filter_args: true
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",

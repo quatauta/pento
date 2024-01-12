@@ -1,5 +1,6 @@
 defmodule PentoWeb.Router do
   use PentoWeb, :router
+  use Honeybadger.Plug
 
   import PentoWeb.UserAuth
 

@@ -11,6 +11,11 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
 
+## Environment variables
+
+* `MIX_ENV`: The Phoenix runtime environment, `dev` for development, `test` for automated tests, `prod` for production
+* `HONEYBADGER_API_KEY`: The API key for error tracking with [honeybadger.io](https://honeybadger.io)
+
 ## Learn more
 
   * Official website: https://www.phoenixframework.org/
