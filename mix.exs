@@ -70,7 +70,8 @@ defmodule Pento.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      setup: ["deps.get", "format", "ecto.setup", "assets.setup", "assets.build"],
+      start: ["phx.server"],
+      setup: ["deps.get", "deps.compile", "ecto.setup", "assets.setup", "assets.build"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: [
