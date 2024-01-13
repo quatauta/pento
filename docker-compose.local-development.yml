@@ -1,0 +1,19 @@
+---
+services:
+  app:
+    build:
+      target: builder
+    command: >-
+      sh -c "
+        apk add inotify-tools &&
+        mix setup &&
+        mix phx.server
+      "
+    environment:
+      MIX_BUILD_ROOT: _build/docker-compose
+      MIX_ENV: dev
+    ports:
+      - 4000:4000
+    volumes:
+      - .:/app
+    working_dir: /app
