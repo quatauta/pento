@@ -2,6 +2,7 @@
 
 defmodule Setup do
   @moduledoc false
+
   def project_root do
     Path.dirname(__DIR__)
   end
@@ -9,7 +10,7 @@ defmodule Setup do
   def asdf_update do
     ".tool-versions"
     |> File.stream!()
-    |> Stream.map(&Regex.replace(~r{\s.*}, &1, ""))
+    |> Stream.map(&Regex.replace(~r/\s.*/, &1, ""))
     |> Enum.to_list()
     |> Enum.each(fn tool ->
       cmd(~w(asdf install #{tool} latest))
@@ -20,6 +21,31 @@ defmodule Setup do
   def brew_bundle_install do
     if File.exists?("Brewfile") do
       cmd(~w(brew bundle install))
+    end
+  end
+
+  def dockerfile do
+    elixir_version = "elixir" |> asdf_tool_version() |> String.replace(~r/-.*/, "")
+    erlang_version = asdf_tool_version("erlang")
+    image_tags = docker_hub_image_tags("hexpm/elixir", "#{elixir_version}-erlang-#{erlang_version}-alpine")
+    alpine_version = image_tags |> Enum.sort() |> List.last() |> String.replace(~r/.*-alpine-/, "")
+
+    path = "Dockerfile"
+    elixir_regex = ~r/(ARG ELIXIR_VERSION)=["']?[0-9.]+["']?/
+    erlang_regex = ~r/(ARG ERLANG_VERSION)=["']?[0-9.]+["']?/
+    alpine_regex = ~r/(ARG ALPINE_VERSION)=["']?[0-9.]+["']?/
+    elixir_replacement = "\\1=\"#{elixir_version}\""
+    erlang_replacement = "\\1=\"#{erlang_version}\""
+    alpine_replacement = "\\1=\"#{alpine_version}\""
+
+    content = File.read!(path)
+    updated_content = Regex.replace(elixir_regex, content, elixir_replacement)
+    updated_content = Regex.replace(erlang_regex, updated_content, erlang_replacement)
+    updated_content = Regex.replace(alpine_regex, updated_content, alpine_replacement)
+
+    if content != updated_content do
+      IO.puts("+ update Dockerfile to Elixir #{elixir_version}, Erlang #{erlang_version}, Alpine #{alpine_version}")
+      File.write!(path, updated_content)
     end
   end
 
@@ -48,9 +74,31 @@ defmodule Setup do
     cmd(~w(mix setup))
   end
 
+  defp asdf_tool_version(tool_name) do
+    ".tool-versions"
+    |> File.stream!()
+    |> Stream.filter(fn x -> String.match?(x, ~r{^#{tool_name} [0-9]}) end)
+    |> Stream.flat_map(&(&1 |> String.trim() |> String.split() |> Enum.take(-1)))
+    |> Enum.to_list()
+    |> Enum.fetch!(0)
+  end
+
   defp cmd([command | args], opts \\ []) do
     (["+"] ++ [command | args]) |> Enum.join(" ") |> IO.puts()
     System.cmd(command, args, [into: IO.stream()] ++ opts)
+  end
+
+  defp docker_hub_image_tags(repository, name_pattern) do
+    Mix.install([:jason])
+    :inets.start()
+    :ssl.start()
+
+    url = "https://hub.docker.com/v2/repositories/#{repository}/tags/?name=#{name_pattern}"
+    headers = [{~c"accept", ~c"application/json"}, {~c"user-agent", ~c"Erlang httpc"}]
+
+    {:ok, {_status_line, _header, response}} = :httpc.request(:get, {url, headers}, [], [])
+    results = Jason.decode!(response)
+    Enum.map(results["results"], &Map.fetch!(&1, "name"))
   end
 
   defp ensure_config_section_version(section, latest_version) do
@@ -87,6 +135,7 @@ File.cd!(Setup.project_root())
 
 Setup.asdf_update()
 Setup.brew_bundle_install()
+Setup.dockerfile()
 Setup.mix_local_hex()
 Setup.mix_local_rebar()
 Setup.mix_deps_update()
