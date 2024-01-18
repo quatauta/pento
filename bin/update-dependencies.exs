@@ -7,14 +7,13 @@ defmodule Setup do
     Path.dirname(__DIR__)
   end
 
-  def asdf_update do
+  def mise_update do
     ".tool-versions"
     |> File.stream!()
     |> Stream.map(&Regex.replace(~r/\s.*/, &1, ""))
     |> Enum.to_list()
     |> Enum.each(fn tool ->
-      cmd(~w(asdf install #{tool} latest))
-      cmd(~w(asdf local #{tool} latest))
+      cmd(~w(mise use --pin #{tool}))
     end)
   end
 
@@ -25,8 +24,8 @@ defmodule Setup do
   end
 
   def dockerfile do
-    elixir_version = "elixir" |> asdf_tool_version() |> String.replace(~r/-.*/, "")
-    erlang_version = asdf_tool_version("erlang")
+    elixir_version = "elixir" |> mise_tool_version() |> String.replace(~r/-.*/, "")
+    erlang_version = mise_tool_version("erlang")
     image_tags = docker_hub_image_tags("hexpm/elixir", "#{elixir_version}-erlang-#{erlang_version}-alpine")
     alpine_version = image_tags |> Enum.sort() |> List.last() |> String.replace(~r/.*-alpine-/, "")
 
@@ -74,7 +73,7 @@ defmodule Setup do
     cmd(~w(mix setup))
   end
 
-  defp asdf_tool_version(tool_name) do
+  defp mise_tool_version(tool_name) do
     ".tool-versions"
     |> File.stream!()
     |> Stream.filter(fn x -> String.match?(x, ~r{^#{tool_name} [0-9]}) end)
@@ -133,7 +132,7 @@ end
 
 File.cd!(Setup.project_root())
 
-Setup.asdf_update()
+Setup.mise_update()
 Setup.brew_bundle_install()
 Setup.dockerfile()
 Setup.mix_local_hex()

@@ -2,7 +2,7 @@
 
 To start your Phoenix server:
 
-  * Install [asdf-vm](https://asdf-vm.com/) and [homebrew](https://brew.sh/)
+  * Install [mise](https://mise.jdx.dev/) and [homebrew](https://brew.sh/)
   * Run [`./bin/setup.exs`](./bin/setup) to install and setup dependencies
   * Optionally run [`./bin/update-dependencies`](./bin/update-dependencies) to update dependencies
   * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`

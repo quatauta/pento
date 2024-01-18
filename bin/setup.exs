@@ -6,8 +6,8 @@ defmodule Setup do
     Path.dirname(__DIR__)
   end
 
-  def asdf_install do
-    cmd(~w(asdf install))
+  def mise_install do
+    cmd(~w(mise install))
   end
 
   def brew_bundle_install do
@@ -44,7 +44,7 @@ end
 
 File.cd!(Setup.project_root())
 
-Setup.asdf_install()
+Setup.mise_install()
 Setup.brew_bundle_install()
 Setup.mix_local_hex()
 Setup.mix_local_rebar()
