@@ -27,24 +27,27 @@ defmodule Setup do
     elixir_version = "elixir" |> mise_tool_version() |> String.replace(~r/-.*/, "")
     erlang_version = mise_tool_version("erlang")
     image_tags = docker_hub_image_tags("hexpm/elixir", "#{elixir_version}-erlang-#{erlang_version}-alpine")
-    alpine_version = image_tags |> Enum.sort() |> List.last() |> String.replace(~r/.*-alpine-/, "")
 
-    path = "Dockerfile"
-    elixir_regex = ~r/(ARG ELIXIR_VERSION)=["']?[0-9.]+["']?/
-    erlang_regex = ~r/(ARG ERLANG_VERSION)=["']?[0-9.]+["']?/
-    alpine_regex = ~r/(ARG ALPINE_VERSION)=["']?[0-9.]+["']?/
-    elixir_replacement = "\\1=\"#{elixir_version}\""
-    erlang_replacement = "\\1=\"#{erlang_version}\""
-    alpine_replacement = "\\1=\"#{alpine_version}\""
+    unless image_tags |> Enum.empty? do
+      alpine_version = image_tags |> Enum.sort() |> List.last() |> String.replace(~r/.*-alpine-/, "")
 
-    content = File.read!(path)
-    updated_content = Regex.replace(elixir_regex, content, elixir_replacement)
-    updated_content = Regex.replace(erlang_regex, updated_content, erlang_replacement)
-    updated_content = Regex.replace(alpine_regex, updated_content, alpine_replacement)
+      path = "Dockerfile"
+      elixir_regex = ~r/(ARG ELIXIR_VERSION)=["']?[0-9.]+["']?/
+      erlang_regex = ~r/(ARG ERLANG_VERSION)=["']?[0-9.]+["']?/
+      alpine_regex = ~r/(ARG ALPINE_VERSION)=["']?[0-9.]+["']?/
+      elixir_replacement = "\\1=\"#{elixir_version}\""
+      erlang_replacement = "\\1=\"#{erlang_version}\""
+      alpine_replacement = "\\1=\"#{alpine_version}\""
 
-    if content != updated_content do
-      IO.puts("+ update Dockerfile to Elixir #{elixir_version}, Erlang #{erlang_version}, Alpine #{alpine_version}")
-      File.write!(path, updated_content)
+      content = File.read!(path)
+      updated_content = Regex.replace(elixir_regex, content, elixir_replacement)
+      updated_content = Regex.replace(erlang_regex, updated_content, erlang_replacement)
+      updated_content = Regex.replace(alpine_regex, updated_content, alpine_replacement)
+
+      if content != updated_content do
+        IO.puts("+ update Dockerfile to Elixir #{elixir_version}, Erlang #{erlang_version}, Alpine #{alpine_version}")
+        File.write!(path, updated_content)
+      end
     end
   end
 
