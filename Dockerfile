@@ -1,6 +1,6 @@
 # https://hub.docker.com/r/hexpm/elixir/tags?page=1&name=alpine
 # https://www.alpinelinux.org/releases/
-ARG ELIXIR_VERSION="1.17.3"
+ARG ELIXIR_VERSION="1.18.0"
 ARG ERLANG_VERSION="27.2"
 ARG ALPINE_VERSION="3.21.0"
 
